@@ -137,22 +137,25 @@ public class BoardView extends JFrame{
 				ImageIcon icon = new ImageIcon("O.jpg");
 		        jbt.setIcon(icon);
 //		        System.out.println(game.getvalue());
-		        int flag = game.gameIsOver();
+		        int flag = -1;
+		        flag = game.gameIsOver();
 				if (flag == 0) 
 					JOptionPane.showMessageDialog(null,"Congratulations! You defeat the computer.");
 				else if(flag == 1) 
 					JOptionPane.showMessageDialog(null,"Draw!");
 				
-				int bestMove = game.compfind();
-				flag = game.gameIsOver();
-				icon = new ImageIcon("X.jpg");
-				jb[bestMove].setIcon(icon);
-//				System.out.println(game.getvalue());
-//				game.print();
-				if (flag == 2) 
-					JOptionPane.showMessageDialog(null,"You lose!");
-				else if(flag == 1)
-					JOptionPane.showMessageDialog(null,"Draw!");
+				if(flag == -1) {
+					int bestMove = game.compfind();
+					flag = game.gameIsOver();
+					icon = new ImageIcon("X.jpg");
+					jb[bestMove].setIcon(icon);
+//					System.out.println(game.getvalue());
+//					game.print();
+					if (flag == 2) 
+						JOptionPane.showMessageDialog(null,"You lose!");
+					else if(flag == 1)
+						JOptionPane.showMessageDialog(null,"Draw!");
+				}
 			}
 			else
 				System.out.println( "error,please input again:" );

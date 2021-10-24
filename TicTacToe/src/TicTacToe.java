@@ -27,6 +27,11 @@ class TicTacToe {
 		HumanWin = -100;
 		Deep = 2;
 		
+//		CompWin = 2;
+//		Draw = 1;
+//		HumanWin = 0;
+//		Deep = 1;
+		
 		Board = new char[9];
 		init();
 		
@@ -145,16 +150,16 @@ class TicTacToe {
 	}
 	
 	public int getBestMove() {
-		A bestMove = new A(0);
+		A best = new A(-1);
 		A value = new A(0);
-		findCompMove(bestMove,value,HumanWin, CompWin, 1);
-		return bestMove.get();
+		findCompMove(best,value,HumanWin, CompWin, 1);
+		return best.get();
 	}
 	
 	public int getvalue() {
 		int res = 0;
-		//Comp
-		//row
+
+		//Comp_row
 		for(int i=0 ; i<9 ; i+=3) {
 			int j;
 			for(j=0 ; j<3 ; j++) {
@@ -162,7 +167,7 @@ class TicTacToe {
 			}
 			if(j==3) res++;
 		}
-		//col
+		//Comp_col
 		for(int i=0 ; i<3 ; i++) {
 			int j;
 			for(j=0 ; j<3 ; j++) {
@@ -170,7 +175,7 @@ class TicTacToe {
 			}
 			if(j==3) res++;
 		}
-		//diag
+		//Comp_diag
 		int k;
 		for(k=0 ; k<3 ; k++) {
 			if(Board[k*3+k]!=Comp_Char && Board[k*3+k]!=Blank_Char)  break;
@@ -181,8 +186,7 @@ class TicTacToe {
 		}
 		if(k==3 )  res++;
 		
-		//Human
-		//row
+		//Human_row
 		for(int i=0 ; i<9 ; i+=3) {
 			int j;
 			for(j=0 ; j<3 ; j++) {
@@ -190,7 +194,7 @@ class TicTacToe {
 			}
 			if(j==3) res--;
 		}
-		//col
+		//Human_col
 		for(int i=0 ; i<3 ; i++) {
 			int j;
 			for(j=0 ; j<3 ; j++) {
@@ -198,7 +202,7 @@ class TicTacToe {
 			}
 			if(j==3) res--;
 		}
-		//diag
+		//Human_diag
 		for(k=0 ; k<3 ; k++) {
 			if(Board[k*3+k]!=Human_Char && Board[k*3+k]!=Blank_Char)  break;
 		}
@@ -213,7 +217,9 @@ class TicTacToe {
 	
 	public void findCompMove(A best, A value, int alpha, int beta, int deep) {
 		if (isFull())
-			value.set(Draw); 
+			value.set(getvalue()); 
+		else if(deep > Deep) 
+			value.set(getvalue());
 		else if(immediateComWin())	{
 			best.set(bestMove);
 			value.set(CompWin);
@@ -229,8 +235,8 @@ class TicTacToe {
 					compPlace(i);
 					A tmp = new A(-1);  // Tmp is useless
 					A response = new A(-1);
-					if(deep<Deep) findHumanMove(tmp, response, value.get(), beta, deep+1);
-					if (getvalue() > value.get()) {
+				    findHumanMove(tmp, response, value.get(), beta, deep+1);
+					if (response.get() > value.get()) {
 						value.set(getvalue());
 						best.set(i);
 					}
@@ -242,7 +248,9 @@ class TicTacToe {
 	
 	public void findHumanMove(A best,A value, int alpha, int beta, int deep) {
 		if (isFull())
-			value.set(Draw);
+			value.set(getvalue());
+		else if(deep > Deep) 
+			value.set(getvalue());
 		else if (immediateHumanWin()){
 			best.set(bestMove);
 			value.set(HumanWin);
@@ -256,10 +264,11 @@ class TicTacToe {
 			for (int i = 0; i < GridNuber && value.get() > alpha; i++) {
 				if (isEmpty(i)) {
 					humanPlace(i);
+					
 					A tmp = new A(-1);			// Tmp is useless
 					A response = new A(-1);  
-					if(deep<2)  findCompMove(tmp, response, alpha, value.get(), deep+1);
-					if (getvalue() < value.get()) {
+					findCompMove(tmp, response, alpha, value.get(), deep+1);
+					if (response.get() < value.get()) {
 						value.set(getvalue());
 						best.set(i);
 					}
